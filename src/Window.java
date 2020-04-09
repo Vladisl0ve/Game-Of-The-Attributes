@@ -29,8 +29,10 @@ public class Window extends JFrame implements Runnable {
 	private final AffineTransform IDENTITY = new AffineTransform();
 
 	private int NumberCells = 1; // start number of cells
+	private final int CELL_RADIUS = 20, ENERGY_RADIUS = 5;
 
 	private ArrayList<Cell> cells = new ArrayList<>();
+	private ArrayList<Energy> energies = new ArrayList<>();
 
 	public Window() {
 
@@ -47,7 +49,9 @@ public class Window extends JFrame implements Runnable {
 		this.setLocation(50, 50);
 
 		for (int i = 0; i < NumberCells; i++) {
-			Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, 0);
+			// Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float)
+			// Math.random() * (h - 100) + 50, 0);
+			Cell c = new Cell(w / 2, h / 2, 0);
 			cells.add(c);
 		}
 	}
@@ -74,12 +78,22 @@ public class Window extends JFrame implements Runnable {
 		g2.fillRect(0, 0, w, h);
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		///
+
+		for (Energy e : energies) {
+			g2.setColor(Energy.COLOR[e.type]);
+			g2.fillOval((int) e.w - ENERGY_RADIUS, (int) e.h - ENERGY_RADIUS, ENERGY_RADIUS, ENERGY_RADIUS);
+		}
+
+		float cellScale = CELL_RADIUS * 0.01f;
+
 		for (Cell c : cells) {
-			float sw = sprites[c.type].getWidth() * 0.5f;
-			float sh = sprites[c.type].getHeight() * 0.5f;
+			float sw = sprites[c.type].getWidth() * cellScale;
+			float sh = sprites[c.type].getHeight() * cellScale;
 			AffineTransform trans = new AffineTransform();
 			trans.setTransform(IDENTITY);
 			trans.translate(c.w - sw, c.h - sh);
+			trans.rotate(c.rotation + Math.PI / 2, sw, sh);
+			trans.scale(cellScale, cellScale);
 			g2.drawImage(sprites[c.type], trans, this);
 		}
 
@@ -87,8 +101,25 @@ public class Window extends JFrame implements Runnable {
 
 	private void logic() {
 		for (Cell c : cells) {
-			c.w -= 0.1f;
-			c.h -= 0.1f;
+			c.w += c.sw;
+			c.h += c.sh;
+			c.sw *= c.slip;
+			c.sh *= c.slip;
+			if (c.w < 0) {
+				c.sw += 5;
+			} else if (c.w > w) {
+				c.sw -= 5;
+			}
+			if (c.h < 0) {
+				c.sh += 5;
+			} else if (c.h > h) {
+				c.sh -= 5;
+			}
+		}
+
+		if (frame % 30 == 0) {
+			Energy e = new Energy((float) (Math.random() * (w - 100) + 50), (float) (Math.random() * (h - 100) + 50));
+			energies.add(e);
 		}
 		frame++;
 
