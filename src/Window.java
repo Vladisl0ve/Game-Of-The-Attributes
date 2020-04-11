@@ -106,15 +106,18 @@ public class Window extends JFrame implements Runnable {
 			c.sw *= c.slip;
 			c.sh *= c.slip;
 			if (c.w < 0) {
-				c.sw += 5;
+				c.sw += w + 1;
 			} else if (c.w > w) {
-				c.sw -= 5;
+				c.sw -= w + 1;
 			}
 			if (c.h < 0) {
-				c.sh += 5;
+				c.sh += h + 1;
 			} else if (c.h > h) {
-				c.sh -= 5;
+				c.sh -= h + 1;
 			}
+			
+			c.sh += 1 * c.speed;
+			System.out.println(c.w);
 		}
 
 		if (frame % 30 == 0) {

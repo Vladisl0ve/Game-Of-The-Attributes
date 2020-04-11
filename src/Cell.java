@@ -1,10 +1,10 @@
 
 public class Cell {
 
-	public float w, h, speed = 0.5f, rotation, rotationSpeed = 0.2f, slip = 0.8f, sw, sh, tx, ty;
+	public float w, h, speed = 0.05f, rotation, rotationSpeed = 0.2f, slip = 0.08f, sw, sh, tx, ty;
 	public boolean toBeDeleted;
 	public int age, type;
-	
+
 	public float sightDistance = 100f;
 
 	public Cell(float w, float h, int type) {
