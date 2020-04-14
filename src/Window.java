@@ -38,7 +38,7 @@ public class Window extends JFrame implements Runnable {
 
 		for (int i = 0; i < sprites.length; i++) {
 			try {
-				sprites[i] = ImageIO.read(new File("img/m" + i + ".png"));
+				sprites[i] = ImageIO.read(new File("img/cell" + i + ".png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -90,9 +90,9 @@ public class Window extends JFrame implements Runnable {
 			float sw = sprites[c.type].getWidth() * cellScale;
 			float sh = sprites[c.type].getHeight() * cellScale;
 			AffineTransform trans = new AffineTransform();
-			trans.setTransform(IDENTITY);
+			// trans.setTransform(IDENTITY);
 			trans.translate(c.w - sw, c.h - sh);
-			trans.rotate(c.rotation + Math.PI / 2, sw, sh);
+			// trans.rotate(c.rotation + Math.PI / 2, sw, sh);
 			trans.scale(cellScale, cellScale);
 			g2.drawImage(sprites[c.type], trans, this);
 		}
@@ -101,23 +101,21 @@ public class Window extends JFrame implements Runnable {
 
 	private void logic() {
 		for (Cell c : cells) {
-			c.w += c.sw;
-			c.h += c.sh;
-			c.sw *= c.slip;
-			c.sh *= c.slip;
-			if (c.w < 0) {
-				c.sw += w + 1;
-			} else if (c.w > w) {
-				c.sw -= w + 1;
-			}
-			if (c.h < 0) {
-				c.sh += h + 1;
-			} else if (c.h > h) {
-				c.sh -= h + 1;
-			}
-			
-			c.sh += 1 * c.speed;
-			System.out.println(c.w);
+
+			// Checking on being in the visible area
+			if (c.w > w)
+				c.w = 5;
+			else if (c.w < 0)
+				c.w = w - 5;
+
+			if (c.h > h)
+				c.h = 5;
+			else if (c.h < 0)
+				c.h = h - 5;
+			// Stop checking on area
+
+			c.h -= 0.1;
+
 		}
 
 		if (frame % 30 == 0) {
