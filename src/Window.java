@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 public class Window extends JFrame implements Runnable {
 
 	private final int w = 800;
-	private final int h = 600;
+	private final int h = 800;
 
 	private final int FRAMES_TOTAL = 100000;
 	private final int SKIP_FRAMES = 1;
@@ -81,7 +81,7 @@ public class Window extends JFrame implements Runnable {
 
 		for (Energy e : energies) {
 			g2.setColor(Energy.COLOR[e.type]);
-			g2.fillOval((int) e.w - ENERGY_RADIUS, (int) e.h - ENERGY_RADIUS, ENERGY_RADIUS, ENERGY_RADIUS);
+			g2.fillOval((int) e.x - ENERGY_RADIUS, (int) e.y - ENERGY_RADIUS, ENERGY_RADIUS, ENERGY_RADIUS);
 		}
 
 		float cellScale = CELL_RADIUS * 0.01f;
@@ -91,7 +91,7 @@ public class Window extends JFrame implements Runnable {
 			float sh = sprites[c.type].getHeight() * cellScale;
 			AffineTransform trans = new AffineTransform();
 			// trans.setTransform(IDENTITY);
-			trans.translate(c.w - sw, c.h - sh);
+			trans.translate(c.x - sw, c.y - sh);
 			// trans.rotate(c.rotation + Math.PI / 2, sw, sh);
 			trans.scale(cellScale, cellScale);
 			g2.drawImage(sprites[c.type], trans, this);
@@ -99,23 +99,73 @@ public class Window extends JFrame implements Runnable {
 
 	}
 
+	private void moveToDest(Cell c) {
+		if (c.endPointW > c.x)
+			c.x += c.step;
+		else if (c.endPointW < c.x)
+			c.x -= c.step;
+
+		if (c.endPointH > c.y)
+			c.y += c.step;
+		else if (c.endPointH < c.y)
+			c.y -= c.step;
+	}
+
+	private void charging(Cell c, Energy e) {
+
+		/*
+		 * prowerka na bug System.out.println("C.x: " + c.x);
+		 * System.out.println("E.x: "+ e.x); System.out.println("C.y: " + c.y);
+		 * System.out.println("E.y: " + e.y); System.out.println("");
+		 */
+		if (Math.abs(c.x - e.x) <= c.catchDistance)
+			if (Math.abs(c.y - e.y) <= c.catchDistance) {
+				e.toBeDeleted = true;
+				c.energy++;
+			}
+
+	}
+
 	private void logic() {
 		for (Cell c : cells) {
 
-			// Checking on being in the visible area
-			if (c.w > w)
-				c.w = 5;
-			else if (c.w < 0)
-				c.w = w - 5;
+			moveToDest(c);
 
-			if (c.h > h)
-				c.h = 5;
-			else if (c.h < 0)
-				c.h = h - 5;
+			// Checking on being in the visible area
+			if (c.x > w)
+				c.x = 5;
+			else if (c.x < 0)
+				c.x = w - 5;
+
+			if (c.y > h)
+				c.y = 5;
+			else if (c.y < 0)
+				c.y = h - 5;
 			// Stop checking on area
 
-			c.h -= 0.1;
+			float distClosestEnergy = w * w + h * h; // 1 280 000
+			Energy closestEnergy = null;
+			for (Energy e : energies) {
+				float distApplicant = (c.x - e.x) * (c.x - e.x) + (c.y - e.y) * (c.y - e.y); // 80000
+				if (distClosestEnergy > distApplicant) {
+					distClosestEnergy = distApplicant;
+					closestEnergy = e;
+				}
+			}
 
+			if (closestEnergy != null) {
+				c.endPointH = closestEnergy.y;
+				c.endPointW = closestEnergy.x;
+				charging(c, closestEnergy);
+			}
+
+		}
+
+		for (int i = 0; i < energies.size(); i++) {
+			if (energies.get(i).toBeDeleted) {
+				energies.remove(i);
+				i--;
+			}
 		}
 
 		if (frame % 30 == 0) {
