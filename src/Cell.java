@@ -1,9 +1,9 @@
 
 public class Cell {
 
-	public float x, y, speed = 0.05f, step = 5f, endPointW, endPointH;
+	public float x, y, speed = 0.1f, step = 5f, endPointW, endPointH;
 	public boolean toBeDeleted;
-	public int age, type;
+	public int age, type, energyTimer;
 
 	public float sightDistance = 100f;
 	public float catchDistance = 6f;
@@ -18,6 +18,7 @@ public class Cell {
 		this.endPointH = h;
 		this.endPointW = w;
 		this.energy = 10f;
+		this.energyTimer = 0;
 	}
 
 }

@@ -101,14 +101,14 @@ public class Window extends JFrame implements Runnable {
 
 	private void moveToDest(Cell c) {
 		if (c.endPointW > c.x)
-			c.x += c.step;
+			c.x += c.step * c.speed;
 		else if (c.endPointW < c.x)
-			c.x -= c.step;
+			c.x -= c.step * c.speed;
 
 		if (c.endPointH > c.y)
-			c.y += c.step;
+			c.y += c.step * c.speed;
 		else if (c.endPointH < c.y)
-			c.y -= c.step;
+			c.y -= c.step * c.speed;
 	}
 
 	private void charging(Cell c, Energy e) {
@@ -126,10 +126,31 @@ public class Window extends JFrame implements Runnable {
 
 	}
 
+	private void starvation(Cell c) {
+		c.energyTimer++;
+		if (c.energyTimer >= 100) {
+			c.energy--;
+			c.energyTimer = 0;
+		}
+
+		if (c.energy < 0)
+			c.toBeDeleted = true;
+	}
+
+	private void breeding(Cell c) {
+		if (c.energy > 10) {
+			c.energy -= 3;
+			Cell newc = new Cell(c.x - 10, c.y - 10, 0);
+			cells.add(newc);
+		}
+	}
+
 	private void logic() {
 		for (Cell c : cells) {
 
 			moveToDest(c);
+			starvation(c);
+			breeding(c);
 
 			// Checking on being in the visible area
 			if (c.x > w)
@@ -159,11 +180,20 @@ public class Window extends JFrame implements Runnable {
 				charging(c, closestEnergy);
 			}
 
+			c.age++;
+			System.out.println(c.energy);
 		}
 
 		for (int i = 0; i < energies.size(); i++) {
 			if (energies.get(i).toBeDeleted) {
 				energies.remove(i);
+				i--;
+			}
+		}
+
+		for (int i = 0; i < cells.size(); i++) {
+			if (cells.get(i).toBeDeleted) {
+				cells.remove(i);
 				i--;
 			}
 		}
