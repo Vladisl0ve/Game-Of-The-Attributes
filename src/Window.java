@@ -28,7 +28,7 @@ public class Window extends JFrame implements Runnable {
 	private BufferedImage sprites[] = new BufferedImage[3];
 	private final AffineTransform IDENTITY = new AffineTransform();
 
-	private int NumberCells = 10; // start number of cells
+	private int NumberCells = 3; // start number of cells
 	private final int CELL_RADIUS = 20, ENERGY_RADIUS = 5;
 
 	private ArrayList<Cell> cells = new ArrayList<>();
@@ -49,10 +49,17 @@ public class Window extends JFrame implements Runnable {
 		this.setLocation(50, 50);
 
 		for (int i = 0; i < NumberCells; i++) {
-			Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, (int) Math.random() * 4);
-			// Cell c = new Cell(w / 2, h / 2, 0);
-			cells.add(c);
+			int k = 0;
+			while (k < 3) {
+				Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, k);
+				// (int) (Math.random() * 3));
+				// 2);
+				// Cell c = new Cell(w / 2, h / 2, 0);
+				cells.add(c);
+				k++;
+			}
 		}
+
 	}
 
 	@Override
@@ -146,7 +153,8 @@ public class Window extends JFrame implements Runnable {
 
 		if (c.energy > 10 && rand < 0.0001) {
 			c.energy -= 5;
-			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, 0);
+			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+					c.type);
 			cells.add(newc);
 		}
 	}
@@ -193,9 +201,11 @@ public class Window extends JFrame implements Runnable {
 			Energy closestEnergy = null;
 			for (Energy e : energies) {
 				float distApplicant = (c.x - e.x) * (c.x - e.x) + (c.y - e.y) * (c.y - e.y); // 80000
+
 				if (distClosestEnergy > distApplicant) {
 					distClosestEnergy = distApplicant;
 					closestEnergy = e;
+					closestEnergy.isReserved = true;
 				}
 			}
 
@@ -220,15 +230,30 @@ public class Window extends JFrame implements Runnable {
 			if (cells.get(i).toBeDeleted) {
 				cells.remove(i);
 				i--;
-				System.out.println("F");
 			}
 		}
 
-		if (frame % 30 == 0) {
+		if (frame % 10 == 0) {
 			Energy e = new Energy((float) (Math.random() * (w - 100) + 50), (float) (Math.random() * (h - 100) + 50));
 			energies.add(e);
 		}
-		// System.out.println(cells.size());
+		if (frame % 10000 == 0) {
+			int inta = 0, agila = 0, str = 0;
+			for (Cell c : cells) {
+				switch (c.type) {
+				case 0:
+					str++;
+					break;
+				case 1:
+					agila++;
+					break;
+				case 2:
+					inta++;
+					break;
+				}
+			}
+			System.out.println("Sila:\t" + str + "\nAgila:\t" + agila + "\nInta:\t" + inta + "\n\n");
+		}
 		frame++;
 
 	}

@@ -26,10 +26,10 @@ public class Cell {
 		if (type == 0) {
 			energy = 20f;
 			energyCapacity = 50f;
-		} else if (type == 1) {
-			speed = 0.2f;
 			energyTimerDefault = 200;
-			energyTimer = energyTimerDefault;
+			speed = 0.08f;
+		} else if (type == 1) {
+			speed = 0.15f;
 		} else if (type == 2) { // declared in "void charging"
 
 		}
