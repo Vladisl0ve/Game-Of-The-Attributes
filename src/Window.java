@@ -25,7 +25,7 @@ public class Window extends JFrame implements Runnable {
 	private final Color RED = new Color(255, 100, 120, 255);
 	private BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 	private BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-	private BufferedImage sprites[] = new BufferedImage[1];
+	private BufferedImage sprites[] = new BufferedImage[3];
 	private final AffineTransform IDENTITY = new AffineTransform();
 
 	private int NumberCells = 10; // start number of cells
@@ -49,7 +49,7 @@ public class Window extends JFrame implements Runnable {
 		this.setLocation(50, 50);
 
 		for (int i = 0; i < NumberCells; i++) {
-			Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, 0);
+			Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, (int) Math.random() * 4);
 			// Cell c = new Cell(w / 2, h / 2, 0);
 			cells.add(c);
 		}
@@ -110,7 +110,8 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void charging(Cell c, Energy e) {
-
+		if (c.energy >= c.energyCapacity)
+			return;
 		/*
 		 * prowerka na bug System.out.println("C.x: " + c.x);
 		 * System.out.println("E.x: "+ e.x); System.out.println("C.y: " + c.y);
@@ -119,16 +120,21 @@ public class Window extends JFrame implements Runnable {
 		if (Math.abs(c.x - e.x) <= c.catchDistance)
 			if (Math.abs(c.y - e.y) <= c.catchDistance) {
 				e.toBeDeleted = true;
-				c.energy++;
+
+				if (c.type == 2)
+					c.energy += 3;
+				else
+					c.energy++;
 			}
 
 	}
 
 	private void starvation(Cell c) {
-		c.energyTimer++;
-		if (c.energyTimer >= 100) {
+
+		c.energyTimer--;
+		if (c.energyTimer <= 0) {
 			c.energy--;
-			c.energyTimer = 0;
+			c.energyTimer = c.energyTimerDefault;
 		}
 
 		if (c.energy < 0)
@@ -136,18 +142,40 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void breeding(Cell c) {
-		if (c.energy > 10) {
-			c.energy -= 3;
-			Cell newc = new Cell(c.x - 10, c.y - 10, 0);
+		double rand = Math.random();
+
+		if (c.energy > 10 && rand < 0.0001) {
+			c.energy -= 5;
+			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, 0);
 			cells.add(newc);
+		}
+	}
+
+	private void death(Cell c) {
+
+		if (c.rand < 0.000001)
+			c.toBeDeleted = true;
+		if (c.age > 10000) {
+			if (c.rand < 0.001)
+				c.toBeDeleted = true;
+		}
+		if (c.age > 12000) {
+			if (c.rand < 0.1)
+				c.toBeDeleted = true;
+		}
+		if (c.age > 15000) {
+			if (c.rand < 10)
+				c.toBeDeleted = true;
 		}
 	}
 
 	private void logic() {
 		for (Cell c : cells) {
+			c.rand = Math.random() * 100;
 
 			moveToDest(c);
 			starvation(c);
+			death(c);
 
 			// Checking on being in the visible area
 			if (c.x > w)
@@ -192,6 +220,7 @@ public class Window extends JFrame implements Runnable {
 			if (cells.get(i).toBeDeleted) {
 				cells.remove(i);
 				i--;
+				System.out.println("F");
 			}
 		}
 
@@ -199,6 +228,7 @@ public class Window extends JFrame implements Runnable {
 			Energy e = new Energy((float) (Math.random() * (w - 100) + 50), (float) (Math.random() * (h - 100) + 50));
 			energies.add(e);
 		}
+		// System.out.println(cells.size());
 		frame++;
 
 	}
