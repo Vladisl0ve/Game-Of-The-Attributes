@@ -28,7 +28,7 @@ public class Window extends JFrame implements Runnable {
 	private BufferedImage sprites[] = new BufferedImage[1];
 	private final AffineTransform IDENTITY = new AffineTransform();
 
-	private int NumberCells = 1; // start number of cells
+	private int NumberCells = 10; // start number of cells
 	private final int CELL_RADIUS = 20, ENERGY_RADIUS = 5;
 
 	private ArrayList<Cell> cells = new ArrayList<>();
@@ -49,9 +49,8 @@ public class Window extends JFrame implements Runnable {
 		this.setLocation(50, 50);
 
 		for (int i = 0; i < NumberCells; i++) {
-			// Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float)
-			// Math.random() * (h - 100) + 50, 0);
-			Cell c = new Cell(w / 2, h / 2, 0);
+			Cell c = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50, 0);
+			// Cell c = new Cell(w / 2, h / 2, 0);
 			cells.add(c);
 		}
 	}
@@ -77,7 +76,6 @@ public class Window extends JFrame implements Runnable {
 		g2.setColor(BG);
 		g2.fillRect(0, 0, w, h);
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		///
 
 		for (Energy e : energies) {
 			g2.setColor(Energy.COLOR[e.type]);
@@ -150,7 +148,6 @@ public class Window extends JFrame implements Runnable {
 
 			moveToDest(c);
 			starvation(c);
-			breeding(c);
 
 			// Checking on being in the visible area
 			if (c.x > w)
@@ -181,7 +178,6 @@ public class Window extends JFrame implements Runnable {
 			}
 
 			c.age++;
-			System.out.println(c.energy);
 		}
 
 		for (int i = 0; i < energies.size(); i++) {
@@ -192,6 +188,7 @@ public class Window extends JFrame implements Runnable {
 		}
 
 		for (int i = 0; i < cells.size(); i++) {
+			breeding(cells.get(i));
 			if (cells.get(i).toBeDeleted) {
 				cells.remove(i);
 				i--;
