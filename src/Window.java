@@ -46,7 +46,7 @@ public class Window extends JFrame implements Runnable {
 		this.setSize(w, h);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocation(50, 50);
+		this.setLocation(500, 50);
 
 		for (int i = 0; i < NumberCells; i++) {
 			int k = 0;
@@ -129,7 +129,7 @@ public class Window extends JFrame implements Runnable {
 				e.toBeDeleted = true;
 
 				if (c.type == 2)
-					c.energy += 3;
+					c.energy += 2;
 				else
 					c.energy++;
 			}
@@ -149,10 +149,16 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void breeding(Cell c) {
-		double rand = Math.random();
+		// double rand = Math.random();
+		int rand = (int) (Math.random() * 3);
 
-		if (c.energy > 10 && rand < 0.0001) {
+		if (c.energy > 10 && c.type != 0) {
 			c.energy -= 5;
+			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+					c.type);
+			cells.add(newc);
+		} else if (c.energy > 20 && c.type == 0) {
+			c.energy -= 10;
 			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
 					c.type);
 			cells.add(newc);
@@ -237,7 +243,7 @@ public class Window extends JFrame implements Runnable {
 			Energy e = new Energy((float) (Math.random() * (w - 100) + 50), (float) (Math.random() * (h - 100) + 50));
 			energies.add(e);
 		}
-		if (frame % 10000 == 0) {
+		if (frame % 5000 == 0) {
 			int inta = 0, agila = 0, str = 0;
 			for (Cell c : cells) {
 				switch (c.type) {

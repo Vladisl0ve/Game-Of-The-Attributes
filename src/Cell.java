@@ -31,7 +31,8 @@ public class Cell {
 		} else if (type == 1) {
 			speed = 0.15f;
 		} else if (type == 2) { // declared in "void charging"
-
+			energy = 7f;
+			energyCapacity = 20f;
 		}
 
 	}
