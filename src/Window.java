@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class Window extends JFrame implements Runnable {
@@ -16,7 +17,7 @@ public class Window extends JFrame implements Runnable {
 	private final int w = 800;
 	private final int h = 800;
 
-	private final int FRAMES_TOTAL = 100000;
+	private final int FRAMES_TOTAL = 1000000;
 	private final int SKIP_FRAMES = 1;
 	private int frame = 0;
 
@@ -47,6 +48,10 @@ public class Window extends JFrame implements Runnable {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(500, 50);
+		JButton b = new JButton("Submit");
+		b.setBounds(100, 100, 140, 40);
+
+		this.add(b);
 
 		for (int i = 0; i < NumberCells; i++) {
 			int k = 0;
@@ -150,18 +155,30 @@ public class Window extends JFrame implements Runnable {
 
 	private void breeding(Cell c) {
 		// double rand = Math.random();
-		int rand = (int) (Math.random() * 3);
+		int rand = (int) (Math.random() * 101);
 
 		if (c.energy > 10 && c.type != 0) {
 			c.energy -= 5;
-			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
-					c.type);
-			cells.add(newc);
+			if (rand < 10) {
+				Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+						rand % 3);
+				cells.add(newc);
+			} else {
+				Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+						c.type);
+				cells.add(newc);
+			}
 		} else if (c.energy > 20 && c.type == 0) {
 			c.energy -= 10;
-			Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
-					c.type);
-			cells.add(newc);
+			if (rand < 10) {
+				Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+						rand % 3);
+				cells.add(newc);
+			} else {
+				Cell newc = new Cell((float) Math.random() * (w - 100) + 50, (float) Math.random() * (h - 100) + 50,
+						c.type);
+				cells.add(newc);
+			}
 		}
 	}
 
@@ -234,6 +251,7 @@ public class Window extends JFrame implements Runnable {
 		for (int i = 0; i < cells.size(); i++) {
 			breeding(cells.get(i));
 			if (cells.get(i).toBeDeleted) {
+				energies.add(new Energy(cells.get(i).x, cells.get(i).y));
 				cells.remove(i);
 				i--;
 			}
