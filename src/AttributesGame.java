@@ -9,10 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
-public class Window extends JFrame implements Runnable {
+public class AttributesGame extends JFrame implements Runnable {
 
 	private final int w = 800;
 	private final int h = 800;
@@ -35,7 +34,7 @@ public class Window extends JFrame implements Runnable {
 	private ArrayList<Cell> cells = new ArrayList<>();
 	private ArrayList<Energy> energies = new ArrayList<>();
 
-	public Window() {
+	public AttributesGame() {
 
 		for (int i = 0; i < sprites.length; i++) {
 			try {
@@ -48,10 +47,6 @@ public class Window extends JFrame implements Runnable {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(500, 50);
-		JButton b = new JButton("Submit");
-		b.setBounds(100, 100, 140, 40);
-
-		this.add(b);
 
 		for (int i = 0; i < NumberCells; i++) {
 			int k = 0;
